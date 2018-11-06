@@ -9,10 +9,7 @@ import cn.jimmie.learning.rxjava.interfaces.Scheduler;
 import java.util.LinkedList;
 import java.util.Queue;
 
-/**
- * FUCTION :
- * Created by jimmie.qian on 2018/11/5.
- */
+// 实现线程调度的Observable
 public final class ObservableObserveOn<T> extends Observable<T> {
     private final ObservableSource<T> source;
     private final Scheduler           scheduler;
@@ -28,13 +25,13 @@ public final class ObservableObserveOn<T> extends Observable<T> {
     }
 
     static final class ObserveOnObserver<T> implements Observer<T>, Disposable, Runnable {
-        private final Observer<? super T> downstream;
-        private final Scheduler scheduler;
-        private Disposable upstream;
-        private volatile boolean done;
-        private volatile boolean disposed;
-        private Queue<T> queue = new LinkedList<>();
-        private Throwable error;
+        private final    Observer<? super T> downstream;
+        private final    Scheduler           scheduler;
+        private          Disposable          upstream;
+        private volatile boolean             done;
+        private volatile boolean             disposed;
+        private          Queue<T>            queue = new LinkedList<>();
+        private          Throwable           error;
 
         ObserveOnObserver(Observer<? super T> actual, Scheduler scheduler) {
             this.downstream = actual;
@@ -84,10 +81,12 @@ public final class ObservableObserveOn<T> extends Observable<T> {
             return disposed;
         }
 
+        // 提交任务
         void schedule() {
             scheduler.submit(this);
         }
 
+        // 检查事件是否已中断,并作出相应的反馈
         boolean checkTerminated(boolean d, boolean empty, Observer<? super T> a) {
             if (disposed) {
                 queue.clear();
@@ -111,15 +110,15 @@ public final class ObservableObserveOn<T> extends Observable<T> {
             return false;
         }
 
-        @Override
+        @Override // 拦截事件传递,到run方法,run方法将由线程池运行
         public void run() {
-            final Queue<T> q = queue;
+            final Queue<T>            q = queue;
             final Observer<? super T> a = downstream;
             for (; ; ) {
                 if (checkTerminated(done, q.isEmpty(), a)) return;
                 for (; ; ) {
                     boolean d = done;
-                    T v;
+                    T       v;
                     try {
                         v = q.poll();
                     } catch (Throwable ex) {

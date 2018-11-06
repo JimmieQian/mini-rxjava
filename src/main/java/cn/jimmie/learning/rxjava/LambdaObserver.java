@@ -7,11 +7,13 @@ import cn.jimmie.learning.rxjava.interfaces.Disposable;
 import cn.jimmie.learning.rxjava.interfaces.Observer;
 
 // LambdaObserver.java
+// lambda表达式支持
 public class LambdaObserver<T> implements Observer<T>, Disposable {
     private final Consumer<? super T>          onNext;
     private final Consumer<? super Throwable>  onError;
     private final Action                       onComplete;
     private final Consumer<? super Disposable> onSubscribe;
+
     LambdaObserver(Consumer<? super T> onNext, Consumer<? super Throwable> onError,
                    Action onComplete, Consumer<? super Disposable> onSubscribe) {
         this.onNext = onNext;
@@ -19,6 +21,7 @@ public class LambdaObserver<T> implements Observer<T>, Disposable {
         this.onComplete = onComplete;
         this.onSubscribe = onSubscribe;
     }
+
     @Override
     public void onSubscribe(Disposable d) {
         try {
@@ -27,6 +30,7 @@ public class LambdaObserver<T> implements Observer<T>, Disposable {
             onError(e);
         }
     }
+
     @Override
     public void onNext(T t) {
         if (!isDisposed())
@@ -36,6 +40,7 @@ public class LambdaObserver<T> implements Observer<T>, Disposable {
                 onError(e);
             }
     }
+
     @Override
     public void onError(Throwable e) {
         if (!isDisposed())
@@ -47,6 +52,7 @@ public class LambdaObserver<T> implements Observer<T>, Disposable {
                 dispose();
             }
     }
+
     @Override
     public void onComplete() {
         if (!isDisposed())
@@ -58,11 +64,14 @@ public class LambdaObserver<T> implements Observer<T>, Disposable {
                 dispose();
             }
     }
+
     private volatile boolean isDisposed = false;
+
     @Override
     public void dispose() {
         isDisposed = true;
     }
+
     @Override
     public boolean isDisposed() {
         return isDisposed;

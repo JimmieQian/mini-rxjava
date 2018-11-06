@@ -29,18 +29,22 @@ final class ObservableCreate<T> extends Observable<T> {
             emitter.onError(e);
         }
     }
+
     // 内部分发器
     static class CreateEmitter<T> implements Emitter<T>, Disposable {
         private final Observer<? super T> observer;
+
         CreateEmitter(Observer<? super T> observer) {
             this.observer = observer;
         }
+
         @Override
         public void onNext(T t) {
             // 如果事件没被消费,则进行操作
             if (!isDisposed())
                 observer.onNext(t);
         }
+
         @Override
         public void onError(Throwable e) {
             if (!isDisposed()) {
@@ -52,6 +56,7 @@ final class ObservableCreate<T> extends Observable<T> {
                 }
             }
         }
+
         @Override
         public void onComplete() {
             if (!isDisposed()) {
@@ -63,11 +68,14 @@ final class ObservableCreate<T> extends Observable<T> {
                 }
             }
         }
+
         private volatile boolean isDisposed = false;
+
         @Override
         public void dispose() {
             isDisposed = true;
         }
+
         @Override
         public boolean isDisposed() {
             return isDisposed;

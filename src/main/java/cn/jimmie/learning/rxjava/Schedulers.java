@@ -2,10 +2,14 @@ package cn.jimmie.learning.rxjava;
 
 import cn.jimmie.learning.rxjava.interfaces.Scheduler;
 
-/**
- * FUCTION :
- * Created by jimmie.qian on 2018/11/5.
- */
+// 线程调度工厂
 public class Schedulers {
-    public static final Scheduler IO = new IOScheduler();
+    public static Scheduler io() {
+        return IOHolder.DEFAULT;
+    }
+
+    // 内部静态类,实现懒加载
+    private final static class IOHolder {
+        private static final Scheduler DEFAULT = new IOScheduler();
+    }
 }

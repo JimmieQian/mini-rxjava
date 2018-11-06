@@ -41,10 +41,12 @@ public abstract class Observable<T> implements ObservableSource<T> {
         return subscribe(next, Functions.emptyConsumer(), Functions.EMPTY_ACTION, Functions.emptyConsumer());
     }
 
+    // map操作符
     public <R> Observable<R> map(Function<? super T, ? extends R> mapper) {
         return new ObservableMap<>(this, mapper);
     }
 
+    // 线程调度操作符
     public final Observable<T> observeOn(Scheduler scheduler) {
         return new ObservableObserveOn<>(this, scheduler);
     }

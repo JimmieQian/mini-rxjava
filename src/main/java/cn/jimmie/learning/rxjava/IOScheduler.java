@@ -8,25 +8,20 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-/**
- * FUCTION :
- * Created by jimmie.qian on 2018/11/5.
- */
+// io线程调度的具体实现
 public class IOScheduler implements Scheduler {
-    private final ExecutorService executor = Executors.newCachedThreadPool();
-
+    // 线程池
+    private final ExecutorService       executor  = Executors.newCachedThreadPool();
+    // 保存Future对象,为了能够中断指定线程
     private final Map<Runnable, Future> futureMap = new ConcurrentHashMap<>();
-
     @Override
     public void submit(Runnable runnable) {
         Future future = futureMap.get(runnable);
-        if (future != null) {
-            if (!future.isDone()) return;
-        }
+        // 如果对应的任务正在执行,则无需再提交
+        if (future != null && !future.isDone()) return;
         if (executor.isShutdown()) return;
         futureMap.put(runnable, executor.submit(runnable));
     }
-
     @Override
     public void remove(Runnable runnable) {
         Future future = futureMap.get(runnable);
@@ -38,7 +33,6 @@ public class IOScheduler implements Scheduler {
             futureMap.remove(runnable);
         }
     }
-
     @Override
     public void shutdown() {
         if (!executor.isShutdown())

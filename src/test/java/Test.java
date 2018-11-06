@@ -7,7 +7,7 @@ import cn.jimmie.learning.rxjava.interfaces.ObservableOnSubscribe;
 import java.util.concurrent.TimeUnit;
 
 /**
- * FUCTION :
+ * FUCTION : 测试代码
  * Created by jimmie.qian on 2018/11/5.
  */
 public class Test {
@@ -19,7 +19,7 @@ public class Test {
             emmit.onNext("2");
             emmit.onComplete();
         })
-                .observeOn(Schedulers.IO)
+                .observeOn(Schedulers.io())
                 .map(it -> {
                     int r = Integer.parseInt(it) * 10;
                     System.out.println(r + " : map : " + Thread.currentThread().getName());
@@ -69,7 +69,7 @@ public class Test {
             emitter.onNext(3);
             emitter.onComplete();
         })
-                .observeOn(Schedulers.IO)
+                .observeOn(Schedulers.io())
                 .subscribe(System.out::println);
         disposable.dispose();
     }
